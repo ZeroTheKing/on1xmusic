@@ -20,7 +20,7 @@ const gif = require("gif-search");
 
 const client = new Discord.Client({disableEveryone: true});
 
-const prefix = "2";
+const prefix = "$";
 /////////////////////////
 ////////////////////////
 
@@ -102,23 +102,23 @@ client.on('message', async msg => {
 	if (command === `play`) {
 		const voiceChannel = msg.member.voiceChannel;
         
-        if (!voiceChannel) return msg.channel.send("انت لم تدخل روم صوتي");
+        if (!voiceChannel) return msg.channel.send("You did not enter my voice");
         
         const permissions = voiceChannel.permissionsFor(msg.client.user);
         
         if (!permissions.has('CONNECT')) {
 
-			return msg.channel.send("ليست لدي صلاحيات للدخول الى الروم");
+			return msg.channel.send("I do not have the powers to enter the Room");
         }
         
 		if (!permissions.has('SPEAK')) {
 
-			return msg.channel.send("انا لا يمكنني التكلم في هاذه الروم");
+			return msg.channel.send("I can not speak in this Room");
 		}
 
 		if (!permissions.has('EMBED_LINKS')) {
 
-			return msg.channel.sendMessage("انا لا املك صلاحيات ارسال روابط")
+			return msg.channel.sendMessage("I do not have powers to send links")
 		}
 
 		if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
@@ -162,7 +162,7 @@ client.on('message', async msg => {
 						});
 					} catch (err) {
 						console.error(err);
-						return msg.channel.send('لم يتم اختيار الاغنية');
+						return msg.channel.send('The song was not selected');
                     }
                     
 					const videoIndex = parseInt(response.first().content);
@@ -181,31 +181,31 @@ client.on('message', async msg => {
         
 	} else if (command === `skip`) {
 
-		if (!msg.member.voiceChannel) return msg.channel.send("يجب ان تكون في روم صوتي");
-        if (!serverQueue) return msg.channel.send("ليست هناك اغاني ليتم التخطي");
+		if (!msg.member.voiceChannel) return msg.channel.send("You must be in my audio Rom");
+        if (!serverQueue) return msg.channel.send("There are no songs to skip");
 
-		serverQueue.connection.dispatcher.end('تم تخطي الاغنية');
+		serverQueue.connection.dispatcher.end('The song was skipped');
         return undefined;
         
 	} else if (command === `stop`) {
 
-		if (!msg.member.voiceChannel) return msg.channel.send("يجب ان تكون في روم صوتي");
+		if (!msg.member.voiceChannel) return msg.channel.send("You must be in my audio Rom");
         if (!serverQueue) return msg.channel.send("There is no Queue to stop!!");
         
 		serverQueue.songs = [];
-		serverQueue.connection.dispatcher.end('تم ايقاف الاغنية لقد خرجت من الروم الصوتي');
+		serverQueue.connection.dispatcher.end('The song was stopped and I came out of the acoustic rum');
         return undefined;
         
 	} else if (command === `vol`) {
 
-		if (!msg.member.voiceChannel) return msg.channel.send("يجب ان تكون في روم صوتي");
-		if (!serverQueue) return msg.channel.send('يعمل الامر فقط عند تشغيل مقطع صوتي');
-        if (!args[1]) return msg.channel.send(`لقد تم تغير درجة الصوت الى**${serverQueue.volume}**`);
+		if (!msg.member.voiceChannel) return msg.channel.send("You must be in my audio Rom");
+		if (!serverQueue) return msg.channel.send('It only works when you play a track');
+        if (!args[1]) return msg.channel.send(`The sound has been changed to**${serverQueue.volume}**`);
         
 		serverQueue.volume = args[1];
         serverQueue.connection.dispatcher.setVolumeLogarithmic(args[1] / 50);
         
-        return msg.channel.send(`درجة الصوت الان**${args[1]}**`);
+        return msg.channel.send(`Sound level now**${args[1]}**`);
 
 	} else if (command === `np`) {
 
@@ -230,15 +230,15 @@ client.on('message', async msg => {
 		if (serverQueue && serverQueue.playing) {
 			serverQueue.playing = false;
 			serverQueue.connection.dispatcher.pause();
-			return msg.channel.send('تم الايقاف');
+			return msg.channel.send('Suspended');
 		}
-		return msg.channel.send('في انتظار تشغيل المقطع');
+		return msg.channel.send('Waiting for the section to run');
 	} else if (command === "resume") {
 
 		if (serverQueue && !serverQueue.playing) {
 			serverQueue.playing = true;
 			serverQueue.connection.dispatcher.resume();
-            return msg.channel.send('تم التشغيل');
+            return msg.channel.send('Playback');
             
 		}
 		return msg.channel.send('Queue is empty!');
@@ -283,7 +283,7 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
 		serverQueue.songs.push(song);
 		console.log(serverQueue.songs);
 		if (playlist) return undefined;
-		else return msg.channel.send(`**${song.title}**, تمت اضافة المقطع الى قائمة الانتظار `);
+		else return msg.channel.send(`**${song.title}**, The clip has been added to the queue `);
 	} 
 	return undefined;
 }
@@ -344,12 +344,12 @@ client.on('message', message => {
 
 client.on('ready', () => {
    console.log(`----------------`);
-      console.log(`Desert Bot- Script By : EX Clan`);
+      console.log(`Desert Bot- Script By : Ayman`);
         console.log(`----------------`);
-      console.log(`ON ${client.guilds.size} Servers '     Script By : EX Clan ' `);
+      console.log(`ON ${client.guilds.size} Servers '     Script By : Ayman ' `);
     console.log(`----------------`);
   console.log(`Logged in as ${client.user.tag}!`);
-client.user.setGame(`1play | Last Music`,"http://twitch.tv/Death Shop")
+client.user.setGame(`With on1x`,"http://twitch.tv/Ayman")
 client.user.setStatus("dnd")
 });
 
