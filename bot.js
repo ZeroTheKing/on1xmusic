@@ -20,7 +20,7 @@ const gif = require("gif-search");
 
 const client = new Discord.Client({disableEveryone: true});
 
-const prefix = "$";
+const prefix = "Prefix";
 /////////////////////////
 ////////////////////////
 
@@ -102,23 +102,23 @@ client.on('message', async msg => {
 	if (command === `play`) {
 		const voiceChannel = msg.member.voiceChannel;
         
-        if (!voiceChannel) return msg.channel.send("You did not enter my voice");
+        if (!voiceChannel) return msg.channel.send("انت لم تدخل روم صوتي");
         
         const permissions = voiceChannel.permissionsFor(msg.client.user);
         
         if (!permissions.has('CONNECT')) {
 
-			return msg.channel.send("I do not have the powers to enter the Room");
+			return msg.channel.send("ليست لدي صلاحيات للدخول الى الروم");
         }
         
 		if (!permissions.has('SPEAK')) {
 
-			return msg.channel.send("I can not speak in this Room");
+			return msg.channel.send("انا لا يمكنني التكلم في هاذه الروم");
 		}
 
 		if (!permissions.has('EMBED_LINKS')) {
 
-			return msg.channel.sendMessage("I do not have powers to send links")
+			return msg.channel.sendMessage("انا لا املك صلاحيات ارسال روابط")
 		}
 
 		if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
@@ -162,7 +162,7 @@ client.on('message', async msg => {
 						});
 					} catch (err) {
 						console.error(err);
-						return msg.channel.send('The song was not selected');
+						return msg.channel.send('لم يتم اختيار الاغنية');
                     }
                     
 					const videoIndex = parseInt(response.first().content);
@@ -181,31 +181,31 @@ client.on('message', async msg => {
         
 	} else if (command === `skip`) {
 
-		if (!msg.member.voiceChannel) return msg.channel.send("You must be in my audio Rom");
-        if (!serverQueue) return msg.channel.send("There are no songs to skip");
+		if (!msg.member.voiceChannel) return msg.channel.send("يجب ان تكون في روم صوتي");
+        if (!serverQueue) return msg.channel.send("ليست هناك اغاني ليتم التخطي");
 
-		serverQueue.connection.dispatcher.end('The song was skipped');
+		serverQueue.connection.dispatcher.end('تم تخطي الاغنية');
         return undefined;
         
 	} else if (command === `stop`) {
 
-		if (!msg.member.voiceChannel) return msg.channel.send("You must be in my audio Rom");
+		if (!msg.member.voiceChannel) return msg.channel.send("يجب ان تكون في روم صوتي");
         if (!serverQueue) return msg.channel.send("There is no Queue to stop!!");
         
 		serverQueue.songs = [];
-		serverQueue.connection.dispatcher.end('The song was stopped and I came out of the acoustic rum');
+		serverQueue.connection.dispatcher.end('تم ايقاف الاغنية لقد خرجت من الروم الصوتي');
         return undefined;
         
 	} else if (command === `vol`) {
 
-		if (!msg.member.voiceChannel) return msg.channel.send("You must be in my audio Rom");
-		if (!serverQueue) return msg.channel.send('It only works when you play a track');
-        if (!args[1]) return msg.channel.send(`The sound has been changed to**${serverQueue.volume}**`);
+		if (!msg.member.voiceChannel) return msg.channel.send("يجب ان تكون في روم صوتي");
+		if (!serverQueue) return msg.channel.send('يعمل الامر فقط عند تشغيل مقطع صوتي');
+        if (!args[1]) return msg.channel.send(`لقد تم تغير درجة الصوت الى**${serverQueue.volume}**`);
         
 		serverQueue.volume = args[1];
         serverQueue.connection.dispatcher.setVolumeLogarithmic(args[1] / 50);
         
-        return msg.channel.send(`Sound level now**${args[1]}**`);
+        return msg.channel.send(`درجة الصوت الان**${args[1]}**`);
 
 	} else if (command === `np`) {
 
@@ -230,15 +230,15 @@ client.on('message', async msg => {
 		if (serverQueue && serverQueue.playing) {
 			serverQueue.playing = false;
 			serverQueue.connection.dispatcher.pause();
-			return msg.channel.send('Suspended');
+			return msg.channel.send('تم الايقاف');
 		}
-		return msg.channel.send('Waiting for the section to run');
+		return msg.channel.send('في انتظار تشغيل المقطع');
 	} else if (command === "resume") {
 
 		if (serverQueue && !serverQueue.playing) {
 			serverQueue.playing = true;
 			serverQueue.connection.dispatcher.resume();
-            return msg.channel.send('Playback');
+            return msg.channel.send('تم التشغيل');
             
 		}
 		return msg.channel.send('Queue is empty!');
@@ -283,7 +283,7 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
 		serverQueue.songs.push(song);
 		console.log(serverQueue.songs);
 		if (playlist) return undefined;
-		else return msg.channel.send(`**${song.title}**, The clip has been added to the queue `);
+		else return msg.channel.send(`**${song.title}**, تمت اضافة المقطع الى قائمة الانتظار `);
 	} 
 	return undefined;
 }
@@ -312,45 +312,35 @@ function play(guild, song) {
 }
 
 
+
+const adminprefix = "$";
+const devs = ['492813868955992074'];
 client.on('message', message => {
-    if (message.content === 'help') {
-        let helpEmbed = new Discord.RichEmbed()
-        .setTitle('**أوامر الميوزك...**')
-        .setDescription('**برفكس البوت (!)**')
-        .addField('play', 'لتشغيل اغنية')
-        .addField('join', 'دخول رومك الصوتي')
-        .addField('disconnect', 'الخروج من رومك الصوتي')
-        .addField('skip', 'تخطي الأغنية')
-        .addField('pause', 'ايقاف الاغنية مؤقتا')
-        .addField('resume', 'تكملة الاغنية')
-        .addField('queue', 'اظهار قائمة التشغيل')
-        .addField('np', 'اظهار الاغنية اللي انت مشغلها حاليا')
-        .setFooter('(general_commands) لاظهار الاوامر العامة')
-      message.channel.send(helpEmbed);
-    }
+  var argresult = message.content.split(` `).slice(1).join(' ');
+    if (!devs.includes(message.author.id)) return;
+    
+if (message.content.startsWith(adminprefix + 'playing')) {
+  client.user.setGame(argresult);
+    message.channel.sendMessage(`**${argresult} playing change to **`)
+} else 
+  if (message.content.startsWith(adminprefix + 'name')) {
+client.user.setUsername(argresult).then
+    message.channel.sendMessage(`**${argresult}** : bot name change to`)
+return message.reply("**By Ayman :gift: . **");
+} else
+  if (message.content.startsWith(adminprefix + 'avatar')) {
+client.user.setAvatar(argresult);
+  message.channel.sendMessage(`**${argresult}** : bot avatar change to`);
+      } else     
+if (message.content.startsWith(adminprefix + 'Stream')) {
+  client.user.setGame(argresult, "https://www.twitch.tv/idk");//حقوق دايموند كودز
+    message.channel.sendMessage(`**bot twitch change to  ${argresult}**`)//حقوق دايموند كودز
+}
 });
 
-client.on('message', message => {
-    if (message.content === 'general_commands') {
-        let helpEmbed = new Discord.RichEmbed()
-        .setTitle('**أوامر عامة...**')
-        .addField('avatar', "افاتار الشخص المطلوب")
-        .addField('gif', 'البحث عن جيف انت تطلبه')
-        .addField('ping', 'معرفة ping البوت')
-        .setFooter('المزيد قريبا ان شاء الله!')
-      message.channel.send(helpEmbed);
-    }
-});
 
-client.on('ready', () => {
-   console.log(`----------------`);
-      console.log(`Desert Bot- Script By : Ayman`);
-        console.log(`----------------`);
-      console.log(`ON ${client.guilds.size} Servers '     Script By : Ayman ' `);
-    console.log(`----------------`);
-  console.log(`Logged in as ${client.user.tag}!`);
-client.user.setGame(`With on1x`,"http://twitch.tv/Ayman")
-client.user.setStatus("dnd")
-});
+
+
+
 
 client.login(process.env.BOT_TOKEN);
